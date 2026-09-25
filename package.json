@@ -1,0 +1,27 @@
+{
+  "name": "dsh-max-thinking-mode",
+  "version": "1.0.0",
+  "description": "Max Thinking mode for DeepSeek Harness: a selectable agent preset for hard, novel, or first-idea-likely-wrong problems, with an isolated adversarial review tool.",
+  "private": true,
+  "type": "module",
+  "license": "MIT",
+  "keywords": [
+    "deepseek-harness",
+    "dsh",
+    "cordis",
+    "agent-preset",
+    "isolated-review",
+    "deep-thinking"
+  ],
+  "dsh": {
+    "bundle": {
+      "patch": [
+        "./presets/max-thinking.patch.yml"
+      ]
+    }
+  },
+  "scripts": {
+    "test": "node --import tsx --test packages/tool-isolated-review/tests/*.spec.ts",
+    "build": "tsdown -c packages/tool-isolated-review/tsdown.config.ts"
+  }
+}
