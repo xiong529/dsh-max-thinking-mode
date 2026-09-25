@@ -1,6 +1,6 @@
-# dsh-max-thinking-mode
+# ThoughtForge · 渊思（dsh-max-thinking-mode）
 
-**最大思考模式（Max Thinking mode）** —— 为 [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 设计的 Agent 预设，面向**没有现成答案的问题**：新功能、没见过的新设计、尚未实现过的方案。
+**最大思考模式（Max Thinking mode）** —— 为 [DeepSeek Harness (DSH)](https://github.com/deepseek-ai/deepseek-harness) 设计的 Agent 预设，面向**没有现成答案的问题**：新功能、没见过的新设计、尚未实现过的方案。面对难题，锻造出被验证过的突破方案。
 
 ---
 
