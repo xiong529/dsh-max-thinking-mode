@@ -3,7 +3,7 @@ description: "Model-facing isolated review tool for users and maintainers compos
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-isolated-review
+# @dsh-max-thinking/tool-isolated-review
 
 English | [中文](README.zh.md)
 
@@ -32,7 +32,7 @@ Mount the subagent service, a fresh-context backend such as the in-process spawn
 ```yaml
 - name: '@deepseek-ai/dsh-subagent'
 - name: '@deepseek-ai/dsh-subagent-spawn-in-process'
-- name: '@deepseek-ai/dsh-tool-isolated-review'
+- name: '@dsh-max-thinking/tool-isolated-review'
   config:
     provider: spawn
 ```
@@ -43,7 +43,7 @@ Mount the subagent service, a fresh-context backend such as the in-process spawn
 | `toolName` | `isolated_review` | Model-facing tool name; distinct for every loaded instance |
 | `persona` | fixed reviewer identity | Per-reviewer persona shadowing the deployment persona |
 
-The generated [configuration catalog](../../../docs/config-catalog.md#deepseek-aidsh-tool-isolated-review) is the exhaustive source for every accepted field and its JSDoc.
+The full accepted fields and their JSDoc live in `src/index.ts` (see the `Config` schema and the tool's parameter schema).
 
 ### What the model passes
 

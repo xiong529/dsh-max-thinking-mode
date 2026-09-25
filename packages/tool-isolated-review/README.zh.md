@@ -3,7 +3,7 @@ description: "面向模型的隔离审思工具，供组合最大思考预设的
 kind: "package-reference"
 ---
 
-# @deepseek-ai/dsh-tool-isolated-review
+# @dsh-max-thinking/tool-isolated-review
 
 [English](README.md) | 中文
 
@@ -32,7 +32,7 @@ kind: "package-reference"
 ```yaml
 - name: '@deepseek-ai/dsh-subagent'
 - name: '@deepseek-ai/dsh-subagent-spawn-in-process'
-- name: '@deepseek-ai/dsh-tool-isolated-review'
+- name: '@dsh-max-thinking/tool-isolated-review'
   config:
     provider: spawn
 ```
@@ -43,7 +43,7 @@ kind: "package-reference"
 | `toolName` | `isolated_review` | 模型可见工具名；每个加载实例必须唯一 |
 | `persona` | 固定评审者身份 | 覆盖部署 persona 的逐评审者 persona |
 
-生成的 [configuration catalog](../../../docs/config-catalog.zh.md#deepseek-aidsh-tool-isolated-review) 是每个可接受字段及其 JSDoc 的穷尽式真源。
+每个可接受字段及其 JSDoc 的完整定义见 `src/index.ts`（`Config` schema 与工具参数 schema）。
 
 ### 模型传入什么
 

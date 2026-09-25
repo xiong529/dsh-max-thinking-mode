@@ -30,7 +30,14 @@ docs/evaluating-agent-preset-modes.zh.md  评估协议（如何复现本报告�
 |---|---|
 | **预设声明** | 定义"最大思考模式"是什么：一段 persona 指令 + 挂载的工具列表。安装后出现在 DSH 的新任务模式菜单。 |
 | **isolated_review 工具** | 独立对抗评审：派生无工具/无文件/无历史的子 agent，要求它从不同角度重新思考并反驳你的方案，返回 `sound-as-is / sound-with-changes / different-approach` 结构化裁决。支持 2–3 个并行评审、第二轮对抗、终审仲裁。 |
-| **文档** | 安装说明、使用说明、实测对比报告、设计草案。 |
+| **文档** | 使用指南（行为详解 + 提示词写法）、`isolated_review` 工具指南（参数/形态/成本）、实测对比报告、设计草案。 |
+
+**文档导航**：
+- [docs/usage-guide.zh.md](docs/usage-guide.zh.md) —— 使用指南：模式会怎么做、怎么写任务提示词、何时该选它
+- [docs/isolated-review-guide.zh.md](docs/isolated-review-guide.zh.md) —— `isolated_review` 工具详解：全部参数、三种审思形态、如何写评审问题、成本说明
+- [docs/evaluation-results.md](docs/evaluation-results.md) —— 五任务实测报告：与标准模式的对比
+- [docs/max-thinking-engine-design.md](docs/max-thinking-engine-design.md) —— 下一代「思考引擎」设计草案（进阶阅读）
+- [docs/evaluating-agent-preset-modes.zh.md](docs/evaluating-agent-preset-modes.zh.md) —— 评估协议：如何复现本报告的测评
 
 ---
 
@@ -126,7 +133,7 @@ pnpm build
 
 ## 八、许可证
 
-MIT —— 见 [LICENSE](LICENSE)。工具包改编自 `@deepseek-ai/dsh-tool-isolated-review`（MIT，DeepSeek Harness 项目的一部分）。
+MIT —— 见 [LICENSE](LICENSE)。本仓库的工具包 `@dsh-max-thinking/tool-isolated-review` 改编自 DeepSeek Harness 项目的 `@deepseek-ai/dsh-tool-isolated-review`（MIT），后者是该模式在官方仓库中的原始实现来源。
 
 ## 相关链接
 
