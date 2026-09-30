@@ -185,7 +185,7 @@
                   subagentProvider: spawn
                   maxRounds: 64
           - id: tool-isolated-review
-            name: '@dsh-max-thinking/tool-isolated-review'
+            name: './tool-isolated-review.js'
             config:
               provider: spawn
           - id: tool-ask-user
