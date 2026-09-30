@@ -4,3 +4,7 @@ dist/
 *.tsbuildinfo
 .DS_Store
 *.log
+!packages/tool-isolated-review/lib/
+!packages/tool-isolated-review/lib/**
+pnpm-lock.yaml
+

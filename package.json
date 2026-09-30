@@ -20,6 +20,9 @@
       ]
     }
   },
+  "dependencies": {
+    "@dsh-max-thinking/tool-isolated-review": "file:./packages/tool-isolated-review"
+  },
   "scripts": {
     "test": "node --import tsx --test packages/tool-isolated-review/tests/*.spec.ts",
     "build": "tsdown -c packages/tool-isolated-review/tsdown.config.ts"

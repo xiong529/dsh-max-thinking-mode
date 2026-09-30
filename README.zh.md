@@ -75,24 +75,40 @@ docs/evaluating-agent-preset-modes.zh.md  评估协议（如何复现本报告�
 
 ## 五、安装
 
+### ⚠️ 先读：安装时输入什么
+
+本仓库是 GitHub 分发，**尚未发布到 npm registry**。DSH 插件对话框接受 4 种 spec（包名 / Git 地址 / tarball / 本地路径），**输入项目名称（如 `dsh-max-thinking-mode`）会被当作 npm 包名**，去 registry 查找并失败。
+
+**正确做法**：在插件对话框里输入 **GitHub 地址**：
+
+```
+https://github.com/xiong529/dsh-max-thinking-mode
+```
+
+或 git 简写：
+
+```
+github:xiong529/dsh-max-thinking-mode
+```
+
 ### 前置条件
 
 - 已安装 DeepSeek Harness Web 应用（`@deepseek-ai/dsh-web-app`），其提供预设注册表与本模式组合依赖的标准工具集。
-- 构建工具包需要 Node.js `^22.19 || >=24` 与 `pnpm`。
+- 无需本地构建：工具包已预构建（`packages/tool-isolated-review/lib/`），clone 后直接可用。
 
 ### 方式 A：通过插件管理器安装（推荐）
 
-在 DSH Web UI 的**插件**页，或通过 `plugin_manager` API，把本仓库作为 bundle 安装：
+在 DSH Web UI 的**插件**页（桌面端：侧栏插件 → 添加插件），或通过 `plugin_manager` API，把 GitHub 地址作为 bundle 安装：
 
 ```
-plugin_manager install_bundle --target <本仓库路径>
+plugin_manager install_bundle --target https://github.com/xiong529/dsh-max-thinking-mode
 ```
 
 安装后，**最大思考模式**出现在新任务模式菜单与 Agent 预设设置中。
 
 ### 方式 B：在 profile 中声明
 
-在 `$DSH_HOME/profiles/<name>/package.json` 的 bundles 中加入本仓库：
+在 `$DSH_HOME/profiles/<name>/package.json` 的 bundles 中加入本仓库（使用 git 依赖 spec）：
 
 ```json
 {
@@ -101,18 +117,11 @@ plugin_manager install_bundle --target <本仓库路径>
       "bundles": [
         "@deepseek-ai/dsh-base",
         "@deepseek-ai/dsh-headless",
-        "@dsh-max-thinking/dsh-max-thinking-mode"
+        "github:xiong529/dsh-max-thinking-mode"
       ]
     }
   }
 }
-```
-
-### 构建工具包
-
-```sh
-pnpm install
-pnpm build
 ```
 
 ---
