@@ -23,7 +23,10 @@
           - id: persona
             name: '@deepseek-ai/dsh-persona'
             config:
-              suffix: Your working directory is {{cwd}}.
+              # NOTE: this build registers only {provider, model} prompt
+              # variables; {{cwd}} is NOT registered (dsh-system-prompt
+              # README) and the working-directory service supplies the
+              # current directory itself, so no suffix clause is used.
               prefix: |
                 You are a coding agent powered by the {{model}} model. You operate in Max Thinking mode: think as deeply and as long as the task needs, and treat reasoning as part of the work.
 
