@@ -188,6 +188,7 @@
             name: 'dsh-max-thinking-mode/tool-isolated-review.js'
             config:
               provider: spawn
+              agentPreset: minimal
           - id: tool-ask-user
             name: '@deepseek-ai/dsh-tool-ask-user'
           - id: tool-todo

@@ -137,12 +137,12 @@ plugin_manager install_bundle --target https://github.com/xiong529/dsh-max-think
 ## 七、设计说明
 
 - 本模式是**纯 bundle 补丁**：不改 DSH 的 agent loop、guard 或运行时；全部行为来自预设中的 persona 段落 + 一个额外工具。
-- `isolated_review` 对评审者做双重隔离：子 agent 无父对话上下文；`toolFilter` 不保留任何继承工具；固定评审者 persona——评审者只依据你传入的内容推理，无法读文件、跑命令、联网或委派。
+- `isolated_review` 对评审者做双重隔离：子 agent 无父对话上下文；评审者通过一个无工具的 `agentPreset`（内置的 `minimal`）启动，不保留任何继承工具——评审者只依据你传入的内容推理，无法读文件、跑命令、联网或委派。
 - 评审输出为结构化裁决，可机器读取；最终决定权始终在主模型。
 
 ## 八、许可证
 
-MIT —— 见 [LICENSE](LICENSE)。本仓库的工具包 `@dsh-max-thinking/tool-isolated-review` 改编自 DeepSeek Harness 项目的 `@deepseek-ai/dsh-tool-isolated-review`（MIT），后者是该模式在官方仓库中的原始实现来源。
+MIT —— 见 [LICENSE](LICENSE)。本仓库的工具包 `@dsh-max-thinking/tool-isolated-review` 参考 DeepSeek Harness 的 `dsh-tool-subagent` 契约（MIT）编写，为当前 DSH 版本（`ctx.subagents.startActivation` + `agentPreset` 隔离）适配。
 
 ## 相关链接
 

@@ -8,9 +8,9 @@
  * model, which retains authority over the final decision.
  *
  * Isolation is enforced twice: the subagent provider's fresh-context semantics
- * hide the parent conversation, and a `toolFilter` that keeps no inherited
- * tool plus a fixed reviewer persona leave the reviewer with nothing but the
- * passed context to reason from.
+ * hide the parent conversation, and an isolating `agentPreset` (a minimal or
+ * tool-free composition) leaves the reviewer with nothing but the passed
+ * context to reason from.
  *
  * Three review shapes are supported in one tool:
  * - single review (default), with optional parallel reviewers (`reviewers`);
@@ -31,8 +31,14 @@ export interface Config {
     provider: string;
     /** Model-facing tool name (default `isolated_review`). */
     toolName?: string;
-    /** Per-reviewer persona; defaults to the fixed isolated-reviewer identity. */
-    persona?: string;
+    /**
+     * Optional: an isolating agent preset the reviewer subagent runs under.
+     * A preset with no (or a minimal) tool composition is what keeps the
+     * reviewer tool-free. Required to enforce isolation with providers whose
+     * fresh-context semantics do not themselves strip tools; ignored when the
+     * provider lacks the `agentPreset` capability (a warning is logged).
+     */
+    agentPreset?: string;
 }
 /** Runtime schema for the isolated review row. */
 export declare const Config: z<Config>;
@@ -74,7 +80,7 @@ export declare function buildArbiterPrompt(args: IsolatedReviewArgs, reviews: re
 /**
  * Install the isolated review tool for one subagent provider.
  * @param ctx - Context that owns the registrations.
- * @param config - provider selection, optional tool name, and optional persona.
+ * @param config - provider selection, optional tool name, and optional isolating agent preset.
  */
 export declare function apply(ctx: Context, config: Config): void;
 export {};

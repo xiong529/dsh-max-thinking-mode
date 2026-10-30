@@ -8,9 +8,9 @@
  * model, which retains authority over the final decision.
  *
  * Isolation is enforced twice: the subagent provider's fresh-context semantics
- * hide the parent conversation, and a `toolFilter` that keeps no inherited
- * tool plus a fixed reviewer persona leave the reviewer with nothing but the
- * passed context to reason from.
+ * hide the parent conversation, and an isolating `agentPreset` (a minimal or
+ * tool-free composition) leaves the reviewer with nothing but the passed
+ * context to reason from.
  *
  * Three review shapes are supported in one tool:
  * - single review (default), with optional parallel reviewers (`reviewers`);
@@ -29,12 +29,10 @@ export const inject = ['tools', 'subagents'];
 export const Config = z.object({
     provider: z.string().required(),
     toolName: z.string().default('isolated_review'),
-    persona: z.string(),
+    agentPreset: z.string().min(1),
 });
 /** Parallel reviewers are capped at three: more yields diminishing returns. */
 const MAX_REVIEWERS = 3;
-/** The fixed reviewer identity: no tools, no files, no network, no history. */
-const DEFAULT_REVIEWER_PERSONA = 'You are an isolated reviewer. You have no tools and no access to files, the network, or the submitter\'s conversation. Reason only from the context you are given.';
 /** JSON Schema the tool sends to every reviewer, and re-uses as its own output. */
 const REVIEW_SCHEMA = {
     type: 'object',
@@ -305,7 +303,8 @@ function renderArbiter(arbiter) {
 /**
  * Collect and release one foreground run without letting disposal replace an
  * independent result failure.
- * @param run - the published reviewer or arbiter run.
+ * @param run - the published reviewer or arbiter run (an activation provides
+ *   `result` and `dispose`, which is all this helper needs).
  * @param read - structured-result reader for that run's role.
  * @returns the validated structured value.
  */
@@ -333,19 +332,22 @@ async function settleStructuredRun(run, read) {
 /**
  * Install the isolated review tool for one subagent provider.
  * @param ctx - Context that owns the registrations.
- * @param config - provider selection, optional tool name, and optional persona.
+ * @param config - provider selection, optional tool name, and optional isolating agent preset.
  */
 export function apply(ctx, config) {
     const toolName = config.toolName ?? 'isolated_review';
     const assertProviderCapabilities = (provider) => {
-        if (!provider.capabilities.toolFilter) {
-            throw new Error(`tool-isolated-review: provider "${provider.name}" cannot isolate the reviewer (no toolFilter capability)`);
-        }
-        if (!provider.capabilities.persona) {
-            throw new Error(`tool-isolated-review: provider "${provider.name}" cannot set the reviewer persona (no persona capability)`);
-        }
+        // Structured output is the hard requirement: without it the reviewers
+        // cannot return a verdict schema.
         if (!provider.capabilities.outputSchema) {
             throw new Error(`tool-isolated-review: provider "${provider.name}" cannot return a structured verdict (no outputSchema capability)`);
+        }
+        // The isolating agent preset is the supported way to strip the reviewer's
+        // tools today (persona/toolFilter were removed upstream). Warn — do not
+        // fail — when the provider cannot take one: the review still runs, just
+        // with the provider's default composition.
+        if (config.agentPreset !== undefined && !provider.capabilities.agentPreset) {
+            ctx.logger.warn(`tool-isolated-review: provider "${provider.name}" cannot select the isolating agent preset "${config.agentPreset}" (no agentPreset capability); reviewers will run with the provider's default composition`);
         }
     };
     let mounted;
@@ -470,30 +472,27 @@ export function apply(ctx, config) {
                     throw new Error('isolated_review: prior_review and submitter_rebuttal must be supplied together for a second round');
                 }
                 const count = reviewerCount(reviewerArgs.reviewers);
-                const runs = await Promise.all(Array.from({ length: count }, (_, position) => ctx.subagents.start(config.provider, {
-                    label: count > 1 ? `isolated review ${position + 1}/${count}` : 'isolated review',
-                    prompt: [{
-                            type: 'text',
-                            text: buildReviewerPrompt(reviewerArgs, position + 1, count),
-                        }],
-                    parent,
+                // Reviewers start through startActivation (the public contract; `start`
+                // is an internal provider callback). delivery: 'caller' awaits the
+                // result without a parent completion notice, which matches a
+                // synchronous tool call that renders the verdicts.
+                const startActivation = (label, text, outputSchema) => ctx.subagents.startActivation({
+                    provider: config.provider,
+                    label,
+                    request: {
+                        prompt: [{ type: 'text', text }],
+                        parent,
+                        outputSchema,
+                        ...(config.agentPreset === undefined ? {} : { agentPreset: config.agentPreset }),
+                    },
                     signal: exec.signal,
-                    persona: config.persona ?? DEFAULT_REVIEWER_PERSONA,
-                    toolFilter: { allow: [] },
-                    outputSchema: REVIEW_SCHEMA,
-                })));
+                    delivery: 'caller',
+                });
+                const runs = await Promise.all(Array.from({ length: count }, (_, position) => startActivation(count > 1 ? `isolated review ${position + 1}/${count}` : 'isolated review', buildReviewerPrompt(reviewerArgs, position + 1, count), REVIEW_SCHEMA)));
                 const reviews = await Promise.all(runs.map(run => settleStructuredRun(run, reviewVerdictOf)));
                 if (reviewerArgs.arbitrate !== true)
                     return { reviews };
-                const arbiterRun = await ctx.subagents.start(config.provider, {
-                    label: 'isolated arbitration',
-                    prompt: [{ type: 'text', text: buildArbiterPrompt(reviewerArgs, reviews) }],
-                    parent,
-                    signal: exec.signal,
-                    persona: config.persona ?? DEFAULT_REVIEWER_PERSONA,
-                    toolFilter: { allow: [] },
-                    outputSchema: ARBITER_SCHEMA,
-                });
+                const arbiterRun = await startActivation('isolated arbitration', buildArbiterPrompt(reviewerArgs, reviews), ARBITER_SCHEMA);
                 const arbiter = await settleStructuredRun(arbiterRun, arbiterVerdictOf);
                 return { reviews, arbiter };
             },

@@ -11,7 +11,7 @@ This guide explains every parameter, the three review shapes, how to write good 
 A reviewer spawned by this tool is isolated **twice**:
 
 1. **Fresh context**: the subagent provider (e.g. `spawn`) hides the parent conversation and all completed turns. The reviewer has never seen your reasoning.
-2. **No tools**: a `toolFilter` that keeps no inherited tool, plus a fixed reviewer persona, leaves the reviewer with nothing but the context you pass it. It cannot read files, run commands, search the web, delegate, or ask the user.
+2. **No tools**: the reviewer runs under a tool-free `agentPreset` (the built-in `minimal`), inheriting no tools — the reviewer has nothing but the context you pass it. It cannot read files, run commands, search the web, delegate, or ask the user.
 
 So the reviewer answers **from your framing alone**. This is the point: you get an opinion that is genuinely independent of your own reasoning — but it is only as good as the context you provide.
 
@@ -119,7 +119,7 @@ The mode's persona only invokes `isolated_review` for significant decisions; the
 
 ## 6. Cost and token behavior
 
-- Each call spawns 1–3 fresh subagents (plus one arbiter if `arbitrate` is set), each reading the passed context and producing one reply. The child system prompt is minimal (identity plus reviewer persona, no tool sections).
+- Each call spawns 1–3 fresh subagents (plus one arbiter if `arbitrate` is set), each reading the passed context and producing one reply. The child system prompt is minimal (identity plus the isolating `agentPreset`, no tool sections).
 - Cost scales with the length of `task_context` and the reviewers' replies.
 - The child is a fresh session and does not reuse the parent's prompt prefix, so **KV cache is not shared** with the parent; the parent's log gains the tool call and its results as ordinary events.
 - Parallel reviewers (2–3) run concurrently — the token cost is the sum of all reviewer runs.
